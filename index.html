@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Jogo de Palavras Online</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f9ebc7; color: #5f6f52; text-align: center; margin: 0; }
+        .container { max-width: 400px; margin: 60px auto; background: #fefae0; border-radius: 16px; box-shadow: 0 2px 12px #0001; padding: 32px 24px; }
+        h1 { color: #c4661f; margin-bottom: 16px; }
+        .menu, .tela { margin-bottom: 24px; }
+        input[type="text"], select { font-size: 1.2em; padding: 8px; border-radius: 6px; border: 1px solid #a9b388; width: 90%; margin-bottom: 16px; background: #e6e2c3; color: #5f6f52; }
+        button { font-size: 1.1em; padding: 8px 18px; margin: 8px 6px; border: none; border-radius: 6px; background: #a9b388; color: #fff; cursor: pointer; transition: background 0.2s; }
+        button:hover { background: #b99470; }
+        #resultado { font-size: 1.2em; margin-top: 24px; color: #c4661f; min-height: 32px; }
+        .footer { margin-top: 40px; color: #b99470; font-size: 0.95em; }
+        .hidden { display: none; }
+        .embaralhada { font-size: 1.5em; letter-spacing: 0.3em; margin: 18px 0; color: #c4661f; }
+        /* Fade transition */
+        .tela { opacity: 1; transition: opacity 0.35s; }
+        .fade-out { opacity: 0 !important; pointer-events: none; }
+        .fade-in { opacity: 1 !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Desafio de Palavras</h1>
+        <!-- Menu Inicial -->
+        <div id="tela-menu" class="tela">
+            <button onclick="mostrarTela('solo')">Modo Solo</button>
+            <button onclick="mostrarTela('multi')">Modo Multiplayer</button>
+            <button onclick="mostrarTela('ranking')">Ranking</button>
+            <button onclick="mostrarTela('config')">Configurações</button>
+        </div>
+        <!-- Tela Solo -->
+        <div id="tela-solo" class="tela hidden">
+            <h2>Modo Solo</h2>
+            <div id="solo-inicio">
+                <label for="nome-jogador">Seu nome ou nick:</label><br>
+                <input id="nome-jogador" type="text" maxlength="20" placeholder="Digite seu nome"><br>
+                <label for="dificuldade">Escolha a dificuldade:</label><br>
+                <select id="dificuldade">
+                    <option value="facil">Fácil</option>
+                    <option value="medio">Médio</option>
+                    <option value="dificil">Difícil</option>
+                </select><br>
+                <button onclick="iniciarRodadaSolo()">Iniciar Rodada</button>
+            </div>
+            <div id="solo-jogo" class="hidden">
+                <div class="embaralhada" id="letras-embaralhadas">Letras embaralhadas aparecerão aqui</div>
+                <div id="campos-adivinhacao">[Campos para adivinhar a palavra]</div>
+                <div id="solo-status"></div>
+            </div>
+        </div>
+        <!-- Tela Multiplayer -->
+        <div id="tela-multi" class="tela hidden">
+            <h2>Modo Multiplayer</h2>
+            <p>Em breve: jogue com amigos!</p>
+            <button onclick="mostrarTela('menu')">Voltar ao Menu</button>
+        </div>
+        <!-- Tela Ranking -->
+        <div id="tela-ranking" class="tela hidden">
+            <h2>Ranking</h2>
+            <label for="ranking-dificuldade">Dificuldade:</label>
+            <select id="ranking-dificuldade" onchange="mostrarRankingSolo()">
+                <option value="">Todos</option>
+                <option value="facil">Fácil</option>
+                <option value="medio">Médio</option>
+                <option value="dificil">Difícil</option>
+            </select>
+            <div id="ranking-lista">Carregando ranking...</div>
+            <button onclick="mostrarTela('menu')">Voltar ao Menu</button>
+        </div>
+        <!-- Tela Configurações -->
+        <div id="tela-config" class="tela hidden">
+            <h2>Configurações</h2>
+            <p>Em breve: personalize sua experiência!</p>
+            <button onclick="mostrarTela('menu')">Voltar ao Menu</button>
+        </div>
+    </div>
+    <div class="footer">&copy; 2024 - Jogo de Palavras Online</div>
+    <script>
+        function mostrarTela(tela) {
+            const telas = ['menu', 'solo', 'multi', 'ranking', 'config'];
+            telas.forEach(t => {
+                document.getElementById('tela-' + t).classList.add('hidden');
+            });
+            document.getElementById('tela-' + tela).classList.remove('hidden');
+            if (tela === 'solo') {
+                document.getElementById('solo-inicio').classList.remove('hidden');
+                document.getElementById('solo-jogo').classList.add('hidden');
+            }
+        }
+        // Mostra o menu ao carregar
+        mostrarTela('menu');
+
+        function iniciarRodadaSolo() {
+            // Verifica nome
+            const nome = document.getElementById('nome-jogador').value.trim();
+            if (!nome) {
+                alert('Por favor, digite seu nome ou nick antes de jogar!');
+                document.getElementById('nome-jogador').focus();
+                return;
+            }
+            window.nomeJogadorSolo = nome;
+            // Esconde início, mostra área do jogo
+            document.getElementById('solo-inicio').classList.add('hidden');
+            document.getElementById('solo-jogo').classList.remove('hidden');
+            // Obter dificuldade selecionada
+            const dificuldade = document.getElementById('dificuldade').value;
+            // Chamar backend para sortear palavra
+            fetch('http://localhost:8000/sortear_palavra', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({dificuldade})
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                document.getElementById('letras-embaralhadas').innerText = '';
+                // Salva a palavra correta para uso posterior
+                window.palavraCorretaSolo = data.palavra;
+                // Cria campos de input para cada letra
+                const camposDiv = document.getElementById('campos-adivinhacao');
+                camposDiv.innerHTML = '';
+                let camposInputs = [];
+                for (let i = 0; i < data.palavra.length; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+                    input.size = 1;
+                    input.className = 'campo-letra';
+                    input.style.textAlign = 'center';
+                    input.style.fontSize = '1.3em';
+                    input.style.width = '32px';
+                    input.style.margin = '2px';
+                    input.readOnly = true;
+                    camposDiv.appendChild(input);
+                    camposInputs.push(input);
+                }
+                // Exibe letras embaralhadas como botões
+                const letrasDiv = document.getElementById('letras-embaralhadas');
+                letrasDiv.innerHTML = '';
+                window.letrasSoloDisponiveis = data.embaralhada.split('');
+                window.soloProximaPos = 0;
+                for (let j = 0; j < window.letrasSoloDisponiveis.length; j++) {
+                    const btn = document.createElement('button');
+                    btn.innerText = window.letrasSoloDisponiveis[j].toUpperCase();
+                    btn.className = 'btn-letra-embaralhada';
+                    btn.style.margin = '2px';
+                    btn.style.fontSize = '1.2em';
+                    btn.onclick = function() {
+                        let idxCampo = window.soloProximaPos;
+                        if (idxCampo >= camposInputs.length) return;
+                        const letraClicada = btn.innerText.toLowerCase();
+                        const letraCorreta = window.palavraCorretaSolo[idxCampo];
+                        if (letraClicada === letraCorreta) {
+                            camposInputs[idxCampo].value = letraClicada;
+                            camposInputs[idxCampo].style.background = '#A9B388';
+                            camposInputs[idxCampo].style.color = '#fff';
+                            btn.disabled = true;
+                            btn.style.background = '#B6E2A1'; // verde clarinho
+                            btn.style.color = '#fff';
+                            window.soloProximaPos++;
+                            // Se completou a palavra, checa vitória
+                            if (window.soloProximaPos === camposInputs.length) {
+                                finalizarRodadaSolo();
+                            }
+                        } else {
+                            window.errosSolo = (window.errosSolo || 0) + 1;
+                            atualizarStatusExtraSolo();
+                            // Feedback visual: pisca vermelho
+                            camposInputs[idxCampo].style.background = '#C4661F';
+                            camposInputs[idxCampo].style.color = '#fff';
+                            setTimeout(() => {
+                                camposInputs[idxCampo].style.background = '';
+                                camposInputs[idxCampo].style.color = '';
+                            }, 250);
+                        }
+                    };
+                    letrasDiv.appendChild(btn);
+                }
+                // Adiciona área de tentativas/erros
+                let statusExtra = document.getElementById('solo-status-extra');
+                if (!statusExtra) {
+                    statusExtra = document.createElement('div');
+                    statusExtra.id = 'solo-status-extra';
+                    statusExtra.style.marginTop = '10px';
+                    statusExtra.style.fontSize = '1.1em';
+                    camposDiv.appendChild(statusExtra);
+                }
+                window.tentativasSolo = 0;
+                window.errosSolo = 0;
+                window.tempoSoloInicio = Date.now();
+                window.tempoSoloInterval = setInterval(atualizarStatusExtraSolo, 100);
+                atualizarStatusExtraSolo();
+                document.getElementById('solo-status').innerText = '';
+            })
+            .catch(() => {
+                document.getElementById('letras-embaralhadas').innerText = 'Erro ao sortear palavra.';
+                document.getElementById('campos-adivinhacao').innerText = '';
+            });
+        }
+
+        function atualizarStatusExtraSolo() {
+            const statusExtra = document.getElementById('solo-status-extra');
+            let tempo = 0;
+            if (window.tempoSoloInicio) {
+                tempo = ((Date.now() - window.tempoSoloInicio) / 1000).toFixed(2);
+            }
+            if (statusExtra) {
+                statusExtra.innerText = `Tempo: ${tempo}s | Tentativas: ${window.tentativasSolo} | Erros: ${window.errosSolo}`;
+            }
+        }
+
+        // Função para finalizar rodada solo (vitória)
+        function finalizarRodadaSolo() {
+            if (window.tempoSoloInterval) {
+                clearInterval(window.tempoSoloInterval);
+                window.tempoSoloInterval = null;
+            }
+            // Calcula tempo e penalidade
+            const tempoBase = ((Date.now() - window.tempoSoloInicio) / 1000);
+            const penalidade = (window.errosSolo || 0) * 3;
+            const tempoFinal = tempoBase + penalidade;
+            const dificuldade = document.getElementById('dificuldade').value;
+            const palavra = window.palavraCorretaSolo;
+            const nome = window.nomeJogadorSolo || 'JOGADOR';
+            // Mensagem de vitória
+            let msg = `Parabéns! Você acertou!\nTempo: ${tempoBase.toFixed(2)}s | Penalidade: ${penalidade}s | Tempo final: ${tempoFinal.toFixed(2)}s`;
+            document.getElementById('solo-status').innerText = msg;
+            // Botões de ação
+            const camposDiv = document.getElementById('campos-adivinhacao');
+            const btnsDiv = document.createElement('div');
+            btnsDiv.style.marginTop = '18px';
+            // Botão tentar novamente
+            const btnNovamente = document.createElement('button');
+            btnNovamente.innerText = 'Tentar Novamente';
+            btnNovamente.onclick = function() {
+                reiniciarRodadaSolo();
+            };
+            btnsDiv.appendChild(btnNovamente);
+            // Botão voltar ao menu
+            const btnMenu = document.createElement('button');
+            btnMenu.innerText = 'Voltar ao Menu';
+            btnMenu.onclick = function() {
+                mostrarTela('menu');
+            };
+            btnsDiv.appendChild(btnMenu);
+            camposDiv.appendChild(btnsDiv);
+            // Salvar no ranking
+            fetch('http://localhost:8000/salvar_ranking', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({nome, tempo: tempoFinal, erros: window.errosSolo, dificuldade, palavra})
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                if (data && data.sucesso) {
+                    document.getElementById('solo-status').innerText += '\nResultado salvo no ranking!';
+                }
+            })
+            .catch(() => {
+                document.getElementById('solo-status').innerText += '\nNão foi possível salvar no ranking.';
+            });
+        }
+
+        function reiniciarRodadaSolo() {
+            // Esconde início, mostra área do jogo
+            document.getElementById('solo-inicio').classList.add('hidden');
+            document.getElementById('solo-jogo').classList.remove('hidden');
+            // Obter dificuldade selecionada
+            const dificuldade = document.getElementById('dificuldade').value;
+            // Chamar backend para sortear palavra
+            fetch('http://localhost:8000/sortear_palavra', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({dificuldade})
+            })
+            .then(resp => resp.json())
+            .then(data => {
+                document.getElementById('letras-embaralhadas').innerText = '';
+                // Salva a palavra correta para uso posterior
+                window.palavraCorretaSolo = data.palavra;
+                // Cria campos de input para cada letra
+                const camposDiv = document.getElementById('campos-adivinhacao');
+                camposDiv.innerHTML = '';
+                let camposInputs = [];
+                for (let i = 0; i < data.palavra.length; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.maxLength = 1;
+                    input.size = 1;
+                    input.className = 'campo-letra';
+                    input.style.textAlign = 'center';
+                    input.style.fontSize = '1.3em';
+                    input.style.width = '32px';
+                    input.style.margin = '2px';
+                    input.readOnly = true;
+                    camposDiv.appendChild(input);
+                    camposInputs.push(input);
+                }
+                // Exibe letras embaralhadas como botões
+                const letrasDiv = document.getElementById('letras-embaralhadas');
+                letrasDiv.innerHTML = '';
+                window.letrasSoloDisponiveis = data.embaralhada.split('');
+                window.soloProximaPos = 0;
+                for (let j = 0; j < window.letrasSoloDisponiveis.length; j++) {
+                    const btn = document.createElement('button');
+                    btn.innerText = window.letrasSoloDisponiveis[j].toUpperCase();
+                    btn.className = 'btn-letra-embaralhada';
+                    btn.style.margin = '2px';
+                    btn.style.fontSize = '1.2em';
+                    btn.onclick = function() {
+                        let idxCampo = window.soloProximaPos;
+                        if (idxCampo >= camposInputs.length) return;
+                        const letraClicada = btn.innerText.toLowerCase();
+                        const letraCorreta = window.palavraCorretaSolo[idxCampo];
+                        if (letraClicada === letraCorreta) {
+                            camposInputs[idxCampo].value = letraClicada;
+                            camposInputs[idxCampo].style.background = '#A9B388';
+                            camposInputs[idxCampo].style.color = '#fff';
+                            btn.disabled = true;
+                            btn.style.background = '#B6E2A1'; // verde clarinho
+                            btn.style.color = '#fff';
+                            window.soloProximaPos++;
+                            // Se completou a palavra, checa vitória
+                            if (window.soloProximaPos === camposInputs.length) {
+                                finalizarRodadaSolo();
+                            }
+                        } else {
+                            window.errosSolo = (window.errosSolo || 0) + 1;
+                            atualizarStatusExtraSolo();
+                            // Feedback visual: pisca vermelho
+                            camposInputs[idxCampo].style.background = '#C4661F';
+                            camposInputs[idxCampo].style.color = '#fff';
+                            setTimeout(() => {
+                                camposInputs[idxCampo].style.background = '';
+                                camposInputs[idxCampo].style.color = '';
+                            }, 250);
+                        }
+                    };
+                    letrasDiv.appendChild(btn);
+                }
+                // Adiciona área de tentativas/erros
+                let statusExtra = document.getElementById('solo-status-extra');
+                if (!statusExtra) {
+                    statusExtra = document.createElement('div');
+                    statusExtra.id = 'solo-status-extra';
+                    statusExtra.style.marginTop = '10px';
+                    statusExtra.style.fontSize = '1.1em';
+                    camposDiv.appendChild(statusExtra);
+                }
+                window.tentativasSolo = 0;
+                window.errosSolo = 0;
+                window.tempoSoloInicio = Date.now();
+                window.tempoSoloInterval = setInterval(atualizarStatusExtraSolo, 100);
+                atualizarStatusExtraSolo();
+                document.getElementById('solo-status').innerText = '';
+            })
+            .catch(() => {
+                document.getElementById('letras-embaralhadas').innerText = 'Erro ao sortear palavra.';
+                document.getElementById('campos-adivinhacao').innerText = '';
+            });
+        }
+
+        // Função para exibir ranking solo
+        function mostrarRankingSolo() {
+            mostrarTela('ranking');
+            const listaDiv = document.getElementById('ranking-lista');
+            listaDiv.innerHTML = 'Carregando ranking...';
+            const dificuldade = document.getElementById('ranking-dificuldade').value;
+            let url = 'http://localhost:8000/ranking_solo';
+            if (dificuldade) url += `?dificuldade=${dificuldade}`;
+            fetch(url)
+                .then(resp => resp.json())
+                .then(ranking => {
+                    if (!ranking || ranking.length === 0) {
+                        listaDiv.innerHTML = '<p>Nenhum registro ainda.</p>';
+                        return;
+                    }
+                    let html = '<table style="width:100%;margin:auto;border-collapse:collapse;font-size:1em;">';
+                    html += '<tr style="background:#a9b388;color:#fff;"><th>#</th><th>Nome</th><th>Tempo</th><th>Erros</th><th>Dificuldade</th><th>Palavra</th></tr>';
+                    for (let i = 0; i < Math.min(10, ranking.length); i++) {
+                        const r = ranking[i];
+                        const tempoFinal = (r.tempo + r.erros*3).toFixed(2);
+                        html += `<tr style="background:${i%2===0?'#f9ebc7':'#fefae0'};"><td>${i+1}</td><td>${r.nome}</td><td>${tempoFinal}s</td><td>${r.erros}</td><td>${r.dificuldade}</td><td>${r.palavra.toUpperCase()}</td></tr>`;
+                    }
+                    html += '</table>';
+                    listaDiv.innerHTML = html;
+                })
+                .catch(() => {
+                    listaDiv.innerHTML = '<p>Erro ao carregar ranking.</p>';
+                });
+        }
+        // Chamar mostrarRankingSolo ao clicar no menu
+        const btnRanking = document.querySelector('button[onclick*="mostrarTela(\'ranking\')"]');
+        if (btnRanking) btnRanking.onclick = mostrarRankingSolo;
+    </script>
+</body>
+</html> 
