@@ -39,7 +39,7 @@ PALAVRAS = {
     'dificil': ["abacaxi", "paralelepipedo", "dificuldade", "programador", "bicicleta", "universidade"]
 }
 
-# Cache para palavras do Dicio
+# Cache para palavras do Dicio (versão 2.0)
 DICIO_CACHE = {}
 
 def buscar_palavra_dicio(palavra):
