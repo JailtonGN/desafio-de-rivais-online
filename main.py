@@ -123,10 +123,31 @@ def obter_palavras_por_dificuldade(dificuldade):
     """Retorna palavras baseadas na dificuldade"""
     if dificuldade == 'facil':
         return [
-            "casa", "livro", "porta", "mesa", "pato", "fogo", "bola", "cama", "sol", "lua", "mar", "rio", "pé", "mão", "olho", "boca", "pai", "mãe", "filho", "amigo",
-            "gato", "cão", "pão", "café", "água", "leite", "carne", "fruta", "verde", "azul", "rosa", "preto", "branco", "alto", "baixo", "longe", "perto", "rápido", "lento", "quente",
-            "frio", "novo", "velho", "bom", "ruim", "feliz", "triste", "grande", "pequeno", "forte", "fraco", "rico", "pobre", "jovem", "sábio", "tonto", "limpo", "sujo", "cheio", "vazio",
-            "aberto", "fechado", "claro", "escuro", "fácil", "difícil", "simples", "complexo", "direito", "esquerdo", "cima", "baixo", "dentro", "fora", "antes", "depois", "agora", "sempre", "nunca", "talvez"
+            # Palavras com 4 letras do Dicio.com.br
+            "amor", "casa", "bola", "fogo", "pato", "gato", "cão", "pão", "café", "água", "azul", "rosa", "alto", "baixo", "novo", "velho", "bom", "ruim", "feliz", "triste",
+            "forte", "fraco", "rico", "pobre", "jovem", "limpo", "sujo", "cheio", "vazio", "claro", "escuro", "fácil", "cima", "baixo", "dentro", "fora", "antes", "depois", "agora", "sempre",
+            "nunca", "logo", "auto", "alma", "arte", "onde", "meta", "sair", "noia", "cela", "foco", "face", "alvo", "nojo", "alto", "agir", "base", "pose", "vale", "todo",
+            "novo", "ágil", "nada", "quer", "alva", "alta", "frio", "caso", "fora", "este", "pode", "lume", "algo", "belo", "pena", "tema", "fiel", "nome", "hera", "tipo", "guia", "luta",
+            "esse", "dote", "qual", "seja", "povo", "nato", "real", "item", "leal", "usar", "erro", "café", "fuga", "puro", "grau", "dois", "orar", "modo", "taxa", "selo", "bolo", "cair",
+            "dado", "trem", "obra", "gato", "aqui", "raro", "cena", "gana", "fome", "raiz", "cada", "show", "cara", "flor", "caro", "aula", "hora", "rico", "deve", "seco", "sobe", "mora",
+            "moço", "face", "feio", "lixo", "topo", "fofo", "peso", "rede", "reto", "vixe", "ramo", "anel", "nada", "quer", "bela", "odor", "esta", "liso", "mole", "rosa", "voto", "mesa",
+            "pipa", "sapo", "boca", "rato", "vela", "olho", "mimo", "fama", "coco", "duro", "gado", "voar", "vaga", "saia", "vara", "nota", "meia", "acha", "dose", "dito", "pesa", "foto",
+            "cepa", "luxo", "cego", "dele", "rota", "cabo", "leia", "pura", "ilha", "foge", "ouro", "óleo", "luto", "muro", "seta", "cama", "sono", "hino", "dona", "nora", "polo", "solo",
+            "fala", "nata", "laje", "fixa", "sigo", "cima", "time", "guri", "nova", "unir", "ceia", "azar", "cura", "faço", "anjo", "site", "raça", "copa", "mana", "acre", "digo", "isto",
+            "sujo", "osso", "raio", "vago", "mapa", "mago", "sala", "lado", "sabe", "seca", "pomo", "boia", "leva", "pior", "momo", "vivo", "caju", "coxa", "nela", "mega", "veto", "riso",
+            "dama", "luna", "vaso", "data", "pede", "roça", "pedi", "viva", "faia", "oral", "pera", "cola", "luar", "onda", "cabe", "seda", "sopa", "vaca", "moda", "cruz", "pane", "nulo",
+            "bula", "musa", "pele", "atar", "caça", "cova", "sois", "toga", "maré", "doze", "beco", "dedo", "gaze", "mãos", "gera", "papo", "táxi", "mano", "tatu", "pais", "roxo", "tara",
+            "cria", "frei", "sete", "tapa", "bala", "teto", "dono", "dias", "alho", "zona", "grão", "veia", "dita", "mato", "lago", "jipe", "urso", "faca", "gelo", "arco", "oito", "rama",
+            "cera", "mala", "neve", "onça", "tina", "erva", "arma", "ator", "duas", "lama", "fada", "pino", "seis", "galo", "muda", "copo", "silo", "fino", "olmo", "baía", "tour", "fria",
+            "suco", "gume", "cuia", "lobo", "bote", "loja", "mini", "raia", "mofo", "bode", "égua", "moto", "tela", "toca", "juro", "lote", "peru", "soma", "filo", "cone", "doer", "vila",
+            "feno", "nega", "leoa", "vala", "mata", "pata", "veja", "cega", "olha", "saci", "meme", "poda", "liga", "mico", "lata", "anta", "muco", "pico", "pote", "saco", "lava", "peta",
+            "luva", "roda", "foca", "fumo", "tira", "gala", "pego", "sino", "menu", "bati", "baga", "chat", "tava", "guru", "mira", "mona", "gibi", "isca", "dura", "fita", "capa", "sova",
+            "fina", "furo", "demo", "vime", "caco", "ralo", "bule", "trio", "ruga", "pisa", "migo", "lido", "moca", "doca", "fila", "alça", "fava", "bota", "jato", "rolo", "pupa", "reta",
+            "favo", "cava", "mola", "saio", "dual", "arca", "seto", "soro", "toma", "gema", "nele", "noda", "rodo", "nave", "puxo", "viga", "tiro", "cebo", "deck", "elmo", "paga", "bate",
+            "duna", "gira", "cana", "gari", "nove", "boas", "lima", "piso", "fofa", "soco", "grua", "urna", "abra", "pano", "roer", "nano", "viso", "rega", "paca", "miga", "pega", "roxa",
+            "bico", "fico", "maga", "tico", "gota", "puxa", "faro", "cora", "levo", "mula", "lero", "doma", "pira", "sola", "alar", "roco", "apar", "gata", "nona", "lula", "abre", "bica",
+            "gogo", "gomo", "rela", "bole", "avós", "cubo", "ache", "kilo", "loca", "palo", "papa", "tamo", "rapa", "triz", "siga", "mate", "gude", "pila", "cuca", "cast", "adir", "baba",
+            "siri", "puma", "toco", "godo", "rubi", "neto", "bato", "anis", "cica"
         ]
     elif dificuldade == 'medio':
         return [
