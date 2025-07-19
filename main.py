@@ -130,7 +130,8 @@ def obter_palavras_por_dificuldade(dificuldade):
     """Retorna palavras baseadas na dificuldade"""
     if dificuldade == 'facil':
         return [
-            # Palavras com 4 letras do Dicio.com.br
+            # Palavras com 4-5 letras
+            # 4 letras
             "amor", "casa", "bola", "fogo", "pato", "gato", "cão", "pão", "café", "água", "azul", "rosa", "alto", "baixo", "novo", "velho", "bom", "ruim", "feliz", "triste",
             "forte", "fraco", "rico", "pobre", "jovem", "limpo", "sujo", "cheio", "vazio", "claro", "escuro", "fácil", "cima", "baixo", "dentro", "fora", "antes", "depois", "agora", "sempre",
             "nunca", "logo", "auto", "alma", "arte", "onde", "meta", "sair", "noia", "cela", "foco", "face", "alvo", "nojo", "alto", "agir", "base", "pose", "vale", "todo",
@@ -154,21 +155,28 @@ def obter_palavras_por_dificuldade(dificuldade):
             "duna", "gira", "cana", "gari", "nove", "boas", "lima", "piso", "fofa", "soco", "grua", "urna", "abra", "pano", "roer", "nano", "viso", "rega", "paca", "miga", "pega", "roxa",
             "bico", "fico", "maga", "tico", "gota", "puxa", "faro", "cora", "levo", "mula", "lero", "doma", "pira", "sola", "alar", "roco", "apar", "gata", "nona", "lula", "abre", "bica",
             "gogo", "gomo", "rela", "bole", "avós", "cubo", "ache", "kilo", "loca", "palo", "papa", "tamo", "rapa", "triz", "siga", "mate", "gude", "pila", "cuca", "cast", "adir", "baba",
-            "siri", "puma", "toco", "godo", "rubi", "neto", "bato", "anis", "cica"
+            "siri", "puma", "toco", "godo", "rubi", "neto", "bato", "anis", "cica",
+            # 5 letras
+            "porta", "livro", "mesa", "cama", "sala", "rua", "ponte", "hotel", "museu", "igreja", "cidade", "estado", "país", "sol", "lua", "estrela", "nuvem", "vulcão", "vale", "rio", "mar", "oceano", "ilha", "chuva"
         ]
     elif dificuldade == 'medio':
         return [
-            "janela", "amarelo", "computador", "telefone", "cachorro", "banana", "carro", "escola", "trabalho", "família", "amizade", "felicidade", "esperança", "liberdade", "justiça", "paz", "amor", "vida", "tempo", "música",
-            "arte", "ciência", "história", "geografia", "matemática", "português", "inglês", "espanhol", "francês", "alemão", "italiano", "chinês", "japonês", "coreano", "russo", "árabe", "hebraico", "latim", "grego", "sânscrito",
-            "medicina", "direito", "engenharia", "arquitetura", "psicologia", "filosofia", "sociologia", "antropologia", "economia", "política", "religião", "esporte", "teatro", "cinema", "literatura", "poesia", "romance", "contos", "crônicas", "biografia",
-            "autobiografia", "memórias", "diário", "jornal", "revista", "livro", "biblioteca", "museu", "galeria", "exposição", "concerto", "ópera", "balé", "dança", "pintura", "escultura", "fotografia", "cinema", "televisão", "rádio"
+            # Palavras com 6-8 letras
+            "janela", "amarelo", "cachorro", "banana", "carro", "escola", "trabalho", "família", "amizade", "felicidade", "esperança", "liberdade", "justiça", "música", "arte", "ciência", "história", "geografia", "matemática", "português",
+            "inglês", "espanhol", "francês", "alemão", "italiano", "chinês", "japonês", "coreano", "russo", "árabe", "hebraico", "latim", "grego", "sânscrito", "medicina", "direito", "engenharia", "arquitetura", "psicologia", "filosofia",
+            "sociologia", "antropologia", "economia", "política", "religião", "esporte", "teatro", "cinema", "literatura", "poesia", "romance", "contos", "crônicas", "biografia", "memórias", "jornal", "revista", "biblioteca", "galeria",
+            "exposição", "concerto", "pintura", "escultura", "fotografia", "televisão", "caminho", "cozinha", "banheiro", "quarto", "escritório", "garagem", "parque", "avenida", "estrada", "túnel", "viaduto", "prédio", "apartamento",
+            "condomínio", "restaurante", "shopping", "supermercado", "farmácia", "hospital", "universidade", "igreja", "templo", "mesquita", "sinagoga", "continente", "planeta", "galáxia", "universo", "natureza", "ambiente", "ecologia",
+            "sustentabilidade", "reciclagem", "energia", "eletricidade", "tempestade", "tornado", "furacão", "terremoto", "montanha", "península", "deserto", "floresta", "savana", "tundra", "computador", "telefone", "autobiografia"
         ]
     else:  # dificil
         return [
+            # Palavras com 8+ letras
             "abacaxi", "dificuldade", "programador", "bicicleta", "universidade", "conhecimento", "inteligência", "responsabilidade", "oportunidade", "desenvolvimento", "compreensão", "organização", "comunicação", "transformação", "experiência", "possibilidade", "realização", "aprendizado", "crescimento",
             "tecnologia", "inovação", "criatividade", "imaginação", "inspiração", "motivação", "dedicação", "perseverança", "determinação", "coragem", "confiança", "autoestima", "autoconhecimento", "autodisciplina", "autocontrole", "autoconfiança", "autodeterminação", "autorealização",
             "sustentabilidade", "biodiversidade", "ecossistema", "preservação", "conservação", "reciclagem", "reutilização", "renovação", "regeneração", "restauração", "reconstrução", "reformulação", "reestruturação", "reorganização", "reorientação", "redirecionamento", "replanejamento", "reprogramação", "reconfiguração",
-            "interdisciplinaridade", "multidisciplinaridade", "transdisciplinaridade", "interculturalidade", "multiculturalidade", "transculturalidade", "internacionalização", "globalização", "mundialização", "universalização", "democratização", "modernização", "industrialização", "urbanização", "digitalização", "virtualização", "automatização", "robotização"
+            "interdisciplinaridade", "multidisciplinaridade", "transdisciplinaridade", "interculturalidade", "multiculturalidade", "transculturalidade", "internacionalização", "globalização", "mundialização", "universalização", "democratização", "modernização", "industrialização", "urbanização", "digitalização", "virtualização", "automatização", "robotização",
+            "matemática", "português", "espanhol", "francês", "alemão", "italiano", "chinês", "japonês", "coreano", "hebraico", "sânscrito", "engenharia", "arquitetura", "psicologia", "filosofia", "sociologia", "antropologia", "literatura", "biografia", "autobiografia", "biblioteca", "exposição", "fotografia", "televisão", "apartamento", "condomínio", "restaurante", "supermercado", "farmácia", "hospital", "universidade", "mesquita", "sinagoga", "eletricidade", "tempestade", "terremoto"
         ]
 
 import json
