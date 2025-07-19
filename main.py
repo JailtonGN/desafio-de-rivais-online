@@ -6,6 +6,7 @@ from typing import Optional
 import os
 import json
 import requests
+from bs4 import BeautifulSoup
 import time
 
 app = FastAPI()
@@ -43,13 +44,41 @@ PALAVRAS = {
 DICIO_CACHE = {}
 
 def buscar_palavra_dicio(palavra):
-    """Busca uma palavra no Dicio.com.br (versão simplificada)"""
+    """Busca uma palavra no Dicio.com.br"""
     if palavra in DICIO_CACHE:
         return DICIO_CACHE[palavra]
     
     try:
-        # Por enquanto, retorna uma definição simples
-        definicoes_simples = {
+        # Remove acentos e caracteres especiais para a URL
+        palavra_limpa = palavra.lower().replace('ç', 'c').replace('ã', 'a').replace('õ', 'o').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u')
+        
+        url = f"https://www.dicio.com.br/{palavra_limpa}/"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        }
+        
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Procura pela definição principal
+            definicao_element = soup.find('p', class_='adicional')
+            if not definicao_element:
+                # Tenta outras classes comuns
+                definicao_element = soup.find('div', class_='significado')
+                if not definicao_element:
+                    definicao_element = soup.find('p', class_='significado')
+            
+            if definicao_element:
+                definicao = definicao_element.get_text().strip()
+                # Limita o tamanho da definição
+                if len(definicao) > 200:
+                    definicao = definicao[:200] + "..."
+                DICIO_CACHE[palavra] = definicao
+                return definicao
+        
+        # Se não encontrou no Dicio, retorna definição básica
+        definicoes_basicas = {
             'casa': 'Lugar onde moramos, habitação, residência.',
             'livro': 'Conjunto de folhas impressas ou manuscritas, encadernadas.',
             'porta': 'Abertura na parede para entrar ou sair de um local.',
@@ -83,15 +112,16 @@ def buscar_palavra_dicio(palavra):
             'crescimento': 'Aumento de tamanho ou desenvolvimento.'
         }
         
-        definicao = definicoes_simples.get(palavra.lower())
+        definicao = definicoes_basicas.get(palavra.lower())
         if definicao:
             DICIO_CACHE[palavra] = definicao
             return definicao
         
         return f"Definição de '{palavra}': Palavra em português brasileiro."
     except Exception as e:
-        print(f"Erro ao buscar palavra '{palavra}': {e}")
-        return None
+        print(f"Erro ao buscar palavra '{palavra}' no Dicio: {e}")
+        # Em caso de erro, retorna definição básica
+        return f"Definição de '{palavra}': Palavra em português brasileiro."
 
 def obter_palavras_por_dificuldade(dificuldade):
     """Retorna palavras baseadas na dificuldade"""
