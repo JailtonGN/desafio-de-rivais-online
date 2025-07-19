@@ -43,44 +43,12 @@ PALAVRAS_USADAS = {
 }
 
 def buscar_palavra_dicio(palavra):
-    """Busca definição de uma palavra no Dicio.com.br (versão melhorada)"""
+    """Busca definição de uma palavra (versão simplificada para deploy)"""
     if palavra in DICIO_CACHE:
         return DICIO_CACHE[palavra]
     
-    try:
-        import requests
-        from bs4 import BeautifulSoup
-        
-        # URL do Dicio.com.br seguindo o padrão que você mostrou
-        url = f"https://www.dicio.com.br/{palavra.lower()}/"
-        
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-        }
-        
-        response = requests.get(url, headers=headers, timeout=5)
-        
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Busca pela definição principal
-            definicao_element = soup.find('p', class_='adicional')
-            if definicao_element:
-                definicao = definicao_element.get_text().strip()
-                if definicao:
-                    DICIO_CACHE[palavra] = definicao
-                    return definicao
-            
-            # Busca alternativa por outras classes
-            definicao_element = soup.find('div', class_='significado')
-            if definicao_element:
-                definicao = definicao_element.get_text().strip()
-                if definicao:
-                    DICIO_CACHE[palavra] = definicao
-                    return definicao
-        
-        # Fallback para definições locais se a busca online falhar
-        definicoes_locais = {
+    # Definições locais expandidas
+    definicoes_locais = {
             'casa': 'Lugar onde moramos, habitação, residência familiar.',
             'livro': 'Conjunto de folhas impressas ou manuscritas, encadernadas com conhecimento.',
             'porta': 'Abertura na parede para entrar ou sair de um local, passagem.',
@@ -612,24 +580,6 @@ def buscar_palavra_dicio(palavra):
             return definicao
         
         return f"Definição de '{palavra}': Palavra em português brasileiro com significado próprio."
-    except Exception as e:
-        print(f"Erro ao buscar palavra '{palavra}': {e}")
-        # Fallback para definições locais em caso de erro
-        definicoes_locais = {
-            'casa': 'Lugar onde moramos, habitação, residência familiar.',
-            'livro': 'Conjunto de folhas impressas ou manuscritas, encadernadas com conhecimento.',
-            'porta': 'Abertura na parede para entrar ou sair de um local, passagem.',
-            'mesa': 'Móvel com superfície plana para colocar objetos, trabalhar ou comer.',
-            'pato': 'Ave aquática com bico largo e pés palmados, excelente nadadora.',
-            'fogo': 'Combustão que produz luz e calor, elemento fundamental da natureza.',
-            'bola': 'Objeto esférico usado em jogos e esportes, símbolo de diversão.'
-        }
-        
-        definicao = definicoes_locais.get(palavra.lower())
-        if definicao:
-            return definicao
-            
-        return f"Definição de '{palavra}': Palavra em português brasileiro."
 
 def obter_palavras_por_dificuldade(dificuldade):
     """Retorna palavras baseadas na dificuldade"""
