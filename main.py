@@ -42,6 +42,13 @@ PALAVRAS = {
 # Cache para palavras do Dicio (versão 2.0)
 DICIO_CACHE = {}
 
+# Controle de palavras já usadas por sessão
+PALAVRAS_USADAS = {
+    'facil': set(),
+    'medio': set(),
+    'dificil': set()
+}
+
 def buscar_palavra_dicio(palavra):
     """Busca definição de uma palavra (versão simplificada)"""
     if palavra in DICIO_CACHE:
@@ -196,10 +203,29 @@ def validar(req: PalavraRequest):
 def sortear_palavra(req: SorteioRequest):
     dificuldade = req.dificuldade.lower()
     palavras = obter_palavras_por_dificuldade(dificuldade)
-    palavra = random.choice(palavras)
+    
+    # Filtra palavras já usadas
+    palavras_disponiveis = [p for p in palavras if p not in PALAVRAS_USADAS[dificuldade]]
+    
+    # Se todas as palavras foram usadas, reseta a lista
+    if not palavras_disponiveis:
+        PALAVRAS_USADAS[dificuldade].clear()
+        palavras_disponiveis = palavras
+    
+    # Sorteia uma palavra não usada
+    palavra = random.choice(palavras_disponiveis)
+    
+    # Marca como usada
+    PALAVRAS_USADAS[dificuldade].add(palavra)
+    
     letras = list(palavra)
     random.shuffle(letras)
-    return {"palavra": palavra, "embaralhada": ''.join(letras)}
+    
+    return {
+        "palavra": palavra, 
+        "embaralhada": ''.join(letras),
+        "palavras_restantes": len(palavras) - len(PALAVRAS_USADAS[dificuldade])
+    }
 
 @app.get("/definicao/{palavra}")
 def obter_definicao(palavra: str):
@@ -214,6 +240,42 @@ def obter_definicao(palavra: str):
 def teste():
     """Endpoint de teste simples"""
     return {"mensagem": "Backend funcionando!", "versao": "2.0"}
+
+@app.post("/reset_palavras")
+def reset_palavras():
+    """Reseta as palavras já usadas"""
+    global PALAVRAS_USADAS
+    PALAVRAS_USADAS = {
+        'facil': set(),
+        'medio': set(),
+        'dificil': set()
+    }
+    return {"mensagem": "Palavras resetadas com sucesso!"}
+
+@app.get("/status_palavras")
+def status_palavras():
+    """Mostra quantas palavras já foram usadas"""
+    total_facil = len(obter_palavras_por_dificuldade('facil'))
+    total_medio = len(obter_palavras_por_dificuldade('medio'))
+    total_dificil = len(obter_palavras_por_dificuldade('dificil'))
+    
+    return {
+        "facil": {
+            "total": total_facil,
+            "usadas": len(PALAVRAS_USADAS['facil']),
+            "restantes": total_facil - len(PALAVRAS_USADAS['facil'])
+        },
+        "medio": {
+            "total": total_medio,
+            "usadas": len(PALAVRAS_USADAS['medio']),
+            "restantes": total_medio - len(PALAVRAS_USADAS['medio'])
+        },
+        "dificil": {
+            "total": total_dificil,
+            "usadas": len(PALAVRAS_USADAS['dificil']),
+            "restantes": total_dificil - len(PALAVRAS_USADAS['dificil'])
+        }
+    }
 
 @app.post('/salvar_ranking')
 def salvar_ranking_endpoint(req: RankingRequest):
