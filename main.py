@@ -6,7 +6,6 @@ from typing import Optional
 import os
 import json
 import requests
-from bs4 import BeautifulSoup
 import time
 
 app = FastAPI()
@@ -44,83 +43,80 @@ PALAVRAS = {
 DICIO_CACHE = {}
 
 def buscar_palavra_dicio(palavra):
-    """Busca uma palavra no Dicio.com.br"""
+    """Busca definição de uma palavra (versão simplificada)"""
     if palavra in DICIO_CACHE:
         return DICIO_CACHE[palavra]
     
     try:
-        # Remove acentos e caracteres especiais para a URL
-        palavra_limpa = palavra.lower().replace('ç', 'c').replace('ã', 'a').replace('õ', 'o').replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u')
-        
-        url = f"https://www.dicio.com.br/{palavra_limpa}/"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        # Definições expandidas e melhoradas
+        definicoes_melhoradas = {
+            'casa': 'Lugar onde moramos, habitação, residência familiar.',
+            'livro': 'Conjunto de folhas impressas ou manuscritas, encadernadas com conhecimento.',
+            'porta': 'Abertura na parede para entrar ou sair de um local, passagem.',
+            'mesa': 'Móvel com superfície plana para colocar objetos, trabalhar ou comer.',
+            'pato': 'Ave aquática com bico largo e pés palmados, excelente nadadora.',
+            'fogo': 'Combustão que produz luz e calor, elemento fundamental da natureza.',
+            'bola': 'Objeto esférico usado em jogos e esportes, símbolo de diversão.',
+            'janela': 'Abertura na parede para entrada de luz e ar, vista para o mundo.',
+            'amarelo': 'Cor primária entre verde e laranja, cor do sol e da alegria.',
+            'computador': 'Máquina eletrônica para processar dados, ferramenta moderna.',
+            'telefone': 'Aparelho para comunicação à distância, conecta pessoas.',
+            'cachorro': 'Animal doméstico da família dos canídeos, melhor amigo do homem.',
+            'banana': 'Fruta amarela alongada, rica em potássio e energia.',
+            'abacaxi': 'Fruta tropical com casca espinhosa, doce e refrescante.',
+            'programador': 'Pessoa que escreve códigos de computador, criador digital.',
+            'bicicleta': 'Veículo de duas rodas movido a pedal, transporte sustentável.',
+            'universidade': 'Instituição de ensino superior, centro de conhecimento.',
+            'conhecimento': 'Informação adquirida através do estudo e experiência.',
+            'inteligência': 'Capacidade de aprender e resolver problemas, raciocínio.',
+            'responsabilidade': 'Obrigação de responder pelos próprios atos, dever.',
+            'oportunidade': 'Momento favorável para fazer algo, chance de sucesso.',
+            'desenvolvimento': 'Processo de crescimento e evolução, progresso.',
+            'compreensão': 'Capacidade de entender algo, entendimento profundo.',
+            'organização': 'Ato de organizar ou estruturar, ordem e eficiência.',
+            'comunicação': 'Troca de informações entre pessoas, diálogo.',
+            'transformação': 'Mudança de forma ou natureza, evolução constante.',
+            'experiência': 'Conhecimento adquirido pela prática, vivência.',
+            'possibilidade': 'Chance de algo acontecer, potencial futuro.',
+            'realização': 'Ato de realizar ou concretizar, conquista pessoal.',
+            'aprendizado': 'Processo de aprender algo, aquisição de conhecimento.',
+            'crescimento': 'Aumento de tamanho ou desenvolvimento, evolução.',
+            'cama': 'Móvel para dormir e descansar, lugar de sonhos.',
+            'sol': 'Estrela central do sistema solar, fonte de luz e vida.',
+            'lua': 'Satélite natural da Terra, ilumina as noites.',
+            'mar': 'Massa de água salgada, imensidão azul.',
+            'rio': 'Corpo de água doce que flui, caminho natural.',
+            'pé': 'Parte inferior da perna, base do movimento.',
+            'mão': 'Parte do corpo para pegar e manipular objetos.',
+            'olho': 'Órgão da visão, janela da alma.',
+            'boca': 'Órgão para falar e comer, expressão facial.',
+            'pai': 'Progenitor masculino, figura paterna.',
+            'mãe': 'Progenitora feminina, amor materno.',
+            'filho': 'Descendente direto, herdeiro da família.',
+            'amigo': 'Pessoa com quem temos laços de amizade.',
+            'carro': 'Veículo motorizado para transporte, liberdade.',
+            'escola': 'Instituição de ensino, lugar de aprendizado.',
+            'trabalho': 'Atividade laboral, fonte de sustento.',
+            'família': 'Grupo de pessoas unidas por laços afetivos.',
+            'amizade': 'Relação de afeto entre pessoas, companheirismo.',
+            'felicidade': 'Estado de bem-estar e alegria, contentamento.',
+            'esperança': 'Confiança no futuro, otimismo.',
+            'liberdade': 'Direito de agir livremente, autonomia.',
+            'justiça': 'Princípio de equidade, direito.',
+            'paz': 'Estado de tranquilidade, harmonia.',
+            'amor': 'Sentimento profundo de afeto, carinho.',
+            'vida': 'Existência, período entre nascimento e morte.',
+            'tempo': 'Duração dos eventos, momento presente.'
         }
         
-        response = requests.get(url, headers=headers, timeout=10)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.content, 'html.parser')
-            
-            # Procura pela definição principal
-            definicao_element = soup.find('p', class_='adicional')
-            if not definicao_element:
-                # Tenta outras classes comuns
-                definicao_element = soup.find('div', class_='significado')
-                if not definicao_element:
-                    definicao_element = soup.find('p', class_='significado')
-            
-            if definicao_element:
-                definicao = definicao_element.get_text().strip()
-                # Limita o tamanho da definição
-                if len(definicao) > 200:
-                    definicao = definicao[:200] + "..."
-                DICIO_CACHE[palavra] = definicao
-                return definicao
-        
-        # Se não encontrou no Dicio, retorna definição básica
-        definicoes_basicas = {
-            'casa': 'Lugar onde moramos, habitação, residência.',
-            'livro': 'Conjunto de folhas impressas ou manuscritas, encadernadas.',
-            'porta': 'Abertura na parede para entrar ou sair de um local.',
-            'mesa': 'Móvel com superfície plana para colocar objetos.',
-            'pato': 'Ave aquática com bico largo e pés palmados.',
-            'fogo': 'Combustão que produz luz e calor.',
-            'bola': 'Objeto esférico usado em jogos e esportes.',
-            'janela': 'Abertura na parede para entrada de luz e ar.',
-            'amarelo': 'Cor primária entre verde e laranja.',
-            'computador': 'Máquina eletrônica para processar dados.',
-            'telefone': 'Aparelho para comunicação à distância.',
-            'cachorro': 'Animal doméstico da família dos canídeos.',
-            'banana': 'Fruta amarela alongada, rica em potássio.',
-            'abacaxi': 'Fruta tropical com casca espinhosa.',
-            'programador': 'Pessoa que escreve códigos de computador.',
-            'bicicleta': 'Veículo de duas rodas movido a pedal.',
-            'universidade': 'Instituição de ensino superior.',
-            'conhecimento': 'Informação adquirida através do estudo.',
-            'inteligência': 'Capacidade de aprender e resolver problemas.',
-            'responsabilidade': 'Obrigação de responder pelos próprios atos.',
-            'oportunidade': 'Momento favorável para fazer algo.',
-            'desenvolvimento': 'Processo de crescimento e evolução.',
-            'compreensão': 'Capacidade de entender algo.',
-            'organização': 'Ato de organizar ou estruturar.',
-            'comunicação': 'Troca de informações entre pessoas.',
-            'transformação': 'Mudança de forma ou natureza.',
-            'experiência': 'Conhecimento adquirido pela prática.',
-            'possibilidade': 'Chance de algo acontecer.',
-            'realização': 'Ato de realizar ou concretizar.',
-            'aprendizado': 'Processo de aprender algo.',
-            'crescimento': 'Aumento de tamanho ou desenvolvimento.'
-        }
-        
-        definicao = definicoes_basicas.get(palavra.lower())
+        definicao = definicoes_melhoradas.get(palavra.lower())
         if definicao:
             DICIO_CACHE[palavra] = definicao
             return definicao
         
-        return f"Definição de '{palavra}': Palavra em português brasileiro."
+        return f"Definição de '{palavra}': Palavra em português brasileiro com significado próprio."
     except Exception as e:
-        print(f"Erro ao buscar palavra '{palavra}' no Dicio: {e}")
-        # Em caso de erro, retorna definição básica
+        print(f"Erro ao buscar palavra '{palavra}': {e}")
         return f"Definição de '{palavra}': Palavra em português brasileiro."
 
 def obter_palavras_por_dificuldade(dificuldade):
