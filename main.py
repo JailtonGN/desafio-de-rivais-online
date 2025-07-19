@@ -148,6 +148,11 @@ def obter_definicao(palavra: str):
     else:
         return {"palavra": palavra, "definicao": "Definição não encontrada", "encontrada": False}
 
+@app.get("/teste")
+def teste():
+    """Endpoint de teste simples"""
+    return {"mensagem": "Backend funcionando!", "versao": "2.0"}
+
 @app.post('/salvar_ranking')
 def salvar_ranking_endpoint(req: RankingRequest):
     ranking = carregar_ranking()
