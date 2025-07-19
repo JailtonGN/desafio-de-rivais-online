@@ -612,7 +612,7 @@ def obter_palavras_por_dificuldade(dificuldade):
             "gogo", "gomo", "rela", "bole", "avós", "cubo", "ache", "kilo", "loca", "palo", "papa", "tamo", "rapa", "triz", "siga", "mate", "gude", "pila", "cuca", "cast", "adir", "baba",
             "siri", "puma", "toco", "godo", "rubi", "neto", "bato", "anis", "cica",
             # 5 letras
-            "porta", "livro", "mesa", "cama", "sala", "rua", "ponte", "hotel", "museu", "igreja", "cidade", "estado", "país", "sol", "lua", "estrela", "nuvem", "vulcão", "vale", "rio", "mar", "oceano", "ilha", "chuva"
+            "porta", "mesa", "cama", "sala", "ponte", "hotel", "museu", "igreja", "cidade", "estado", "sol", "lua", "estrela", "nuvem", "vulcão", "vale", "rio", "mar", "oceano", "ilha", "chuva"
         ]
     elif dificuldade == 'medio':
         return [
