@@ -573,13 +573,13 @@ def buscar_palavra_dicio(palavra):
             'ilha': 'Terra cercada de água.',
             'chuva': 'Precipitação de água.'
         }
-        
-        definicao = definicoes_locais.get(palavra.lower())
-        if definicao:
-            DICIO_CACHE[palavra] = definicao
-            return definicao
-        
-        return f"Definição de '{palavra}': Palavra em português brasileiro com significado próprio."
+    
+    definicao = definicoes_locais.get(palavra.lower())
+    if definicao:
+        DICIO_CACHE[palavra] = definicao
+        return definicao
+    
+    return f"Definição de '{palavra}': Palavra em português brasileiro com significado próprio."
 
 def obter_palavras_por_dificuldade(dificuldade):
     """Retorna palavras baseadas na dificuldade"""
