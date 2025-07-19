@@ -167,7 +167,7 @@ def sortear_palavra(req: SorteioRequest):
 
 @app.get("/definicao/{palavra}")
 def obter_definicao(palavra: str):
-    """Busca a definição de uma palavra no Dicio.com.br"""
+    """Busca a definição de uma palavra (versão 2.0)"""
     definicao = buscar_palavra_dicio(palavra)
     if definicao:
         return {"palavra": palavra, "definicao": definicao, "encontrada": True}
