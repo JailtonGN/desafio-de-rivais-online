@@ -122,11 +122,26 @@ def buscar_palavra_dicio(palavra):
 def obter_palavras_por_dificuldade(dificuldade):
     """Retorna palavras baseadas na dificuldade"""
     if dificuldade == 'facil':
-        return ["casa", "livro", "porta", "mesa", "pato", "fogo", "bola", "cama", "sol", "lua", "mar", "rio", "pé", "mão", "olho", "boca", "pai", "mãe", "filho", "amigo"]
+        return [
+            "casa", "livro", "porta", "mesa", "pato", "fogo", "bola", "cama", "sol", "lua", "mar", "rio", "pé", "mão", "olho", "boca", "pai", "mãe", "filho", "amigo",
+            "gato", "cão", "pão", "café", "água", "leite", "carne", "fruta", "verde", "azul", "rosa", "preto", "branco", "alto", "baixo", "longe", "perto", "rápido", "lento", "quente",
+            "frio", "novo", "velho", "bom", "ruim", "feliz", "triste", "grande", "pequeno", "forte", "fraco", "rico", "pobre", "jovem", "sábio", "tonto", "limpo", "sujo", "cheio", "vazio",
+            "aberto", "fechado", "claro", "escuro", "fácil", "difícil", "simples", "complexo", "direito", "esquerdo", "cima", "baixo", "dentro", "fora", "antes", "depois", "agora", "sempre", "nunca", "talvez"
+        ]
     elif dificuldade == 'medio':
-        return ["janela", "amarelo", "computador", "telefone", "cachorro", "banana", "carro", "livro", "escola", "trabalho", "família", "amizade", "felicidade", "esperança", "liberdade", "justiça", "paz", "amor", "vida", "tempo"]
+        return [
+            "janela", "amarelo", "computador", "telefone", "cachorro", "banana", "carro", "escola", "trabalho", "família", "amizade", "felicidade", "esperança", "liberdade", "justiça", "paz", "amor", "vida", "tempo", "música",
+            "arte", "ciência", "história", "geografia", "matemática", "português", "inglês", "espanhol", "francês", "alemão", "italiano", "chinês", "japonês", "coreano", "russo", "árabe", "hebraico", "latim", "grego", "sânscrito",
+            "medicina", "direito", "engenharia", "arquitetura", "psicologia", "filosofia", "sociologia", "antropologia", "economia", "política", "religião", "esporte", "teatro", "cinema", "literatura", "poesia", "romance", "contos", "crônicas", "biografia",
+            "autobiografia", "memórias", "diário", "jornal", "revista", "livro", "biblioteca", "museu", "galeria", "exposição", "concerto", "ópera", "balé", "dança", "pintura", "escultura", "fotografia", "cinema", "televisão", "rádio"
+        ]
     else:  # dificil
-        return ["abacaxi", "paralelepipedo", "dificuldade", "programador", "bicicleta", "universidade", "conhecimento", "inteligência", "responsabilidade", "oportunidade", "desenvolvimento", "compreensão", "organização", "comunicação", "transformação", "experiência", "possibilidade", "realização", "aprendizado", "crescimento"]
+        return [
+            "abacaxi", "dificuldade", "programador", "bicicleta", "universidade", "conhecimento", "inteligência", "responsabilidade", "oportunidade", "desenvolvimento", "compreensão", "organização", "comunicação", "transformação", "experiência", "possibilidade", "realização", "aprendizado", "crescimento",
+            "tecnologia", "inovação", "criatividade", "imaginação", "inspiração", "motivação", "dedicação", "perseverança", "determinação", "coragem", "confiança", "autoestima", "autoconhecimento", "autodisciplina", "autocontrole", "autoconfiança", "autodeterminação", "autorealização",
+            "sustentabilidade", "biodiversidade", "ecossistema", "preservação", "conservação", "reciclagem", "reutilização", "renovação", "regeneração", "restauração", "reconstrução", "reformulação", "reestruturação", "reorganização", "reorientação", "redirecionamento", "replanejamento", "reprogramação", "reconfiguração",
+            "interdisciplinaridade", "multidisciplinaridade", "transdisciplinaridade", "interculturalidade", "multiculturalidade", "transculturalidade", "internacionalização", "globalização", "mundialização", "universalização", "democratização", "modernização", "industrialização", "urbanização", "digitalização", "virtualização", "automatização", "robotização"
+        ]
 
 import json
 RANKING_SOLO_ARQ = 'ranking_solo.json'
