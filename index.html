@@ -207,7 +207,10 @@
                 tempo = ((Date.now() - window.tempoSoloInicio) / 1000).toFixed(2);
             }
             if (statusExtra) {
-                statusExtra.innerText = `Tempo: ${tempo}s | Tentativas: ${window.tentativasSolo} | Erros: ${window.errosSolo}`;
+                statusExtra.innerHTML = `
+                    <div>Tempo: ${tempo}s | Tentativas: ${window.tentativasSolo} | Erros: ${window.errosSolo}</div>
+                    <button onclick="mostrarDefinicao()" style="margin-top: 5px; padding: 5px 10px; background: #a9b388; color: white; border: none; border-radius: 3px; cursor: pointer;">Ver Definição</button>
+                `;
             }
         }
 
@@ -261,6 +264,26 @@
             .catch(() => {
                 document.getElementById('solo-status').innerText += '\nNão foi possível salvar no ranking.';
             });
+        }
+
+        function mostrarDefinicao() {
+            if (!window.palavraCorretaSolo) {
+                alert('Nenhuma palavra carregada!');
+                return;
+            }
+            
+            fetch(`https://desafio-de-rivais-online.onrender.com/definicao/${window.palavraCorretaSolo}`)
+                .then(resp => resp.json())
+                .then(data => {
+                    if (data.encontrada) {
+                        alert(`Definição de "${data.palavra.toUpperCase()}":\n\n${data.definicao}`);
+                    } else {
+                        alert(`Definição não encontrada para "${data.palavra.toUpperCase()}"`);
+                    }
+                })
+                .catch(() => {
+                    alert('Erro ao buscar definição. Tente novamente.');
+                });
         }
 
         function reiniciarRodadaSolo() {
