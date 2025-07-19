@@ -108,7 +108,7 @@
             // Obter dificuldade selecionada
             const dificuldade = document.getElementById('dificuldade').value;
             // Chamar backend para sortear palavra
-            fetch('http://localhost:8000/sortear_palavra', {
+            fetch('https://desafio-de-rivais-online.onrender.com/sortear_palavra', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({dificuldade})
@@ -247,7 +247,7 @@
             btnsDiv.appendChild(btnMenu);
             camposDiv.appendChild(btnsDiv);
             // Salvar no ranking
-            fetch('http://localhost:8000/salvar_ranking', {
+            fetch('https://desafio-de-rivais-online.onrender.com/salvar_ranking', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({nome, tempo: tempoFinal, erros: window.errosSolo, dificuldade, palavra})
@@ -270,7 +270,7 @@
             // Obter dificuldade selecionada
             const dificuldade = document.getElementById('dificuldade').value;
             // Chamar backend para sortear palavra
-            fetch('http://localhost:8000/sortear_palavra', {
+            fetch('https://desafio-de-rivais-online.onrender.com/sortear_palavra', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({dificuldade})
@@ -368,7 +368,7 @@
             const listaDiv = document.getElementById('ranking-lista');
             listaDiv.innerHTML = 'Carregando ranking...';
             const dificuldade = document.getElementById('ranking-dificuldade').value;
-            let url = 'http://localhost:8000/ranking_solo';
+            let url = 'https://desafio-de-rivais-online.onrender.com/ranking_solo';
             if (dificuldade) url += `?dificuldade=${dificuldade}`;
             fetch(url)
                 .then(resp => resp.json())
