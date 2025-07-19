@@ -32,13 +32,6 @@ class RankingRequest(BaseModel):
     dificuldade: str
     palavra: str
 
-# Listas de palavras para cada dificuldade (exemplo)
-PALAVRAS = {
-    'facil': ["casa", "livro", "porta", "mesa", "pato", "fogo", "bola"],
-    'medio': ["janela", "amarelo", "computador", "telefone", "cachorro", "banana"],
-    'dificil': ["abacaxi", "paralelepipedo", "dificuldade", "programador", "bicicleta", "universidade"]
-}
-
 # Cache para palavras do Dicio (versão 2.0)
 DICIO_CACHE = {}
 
